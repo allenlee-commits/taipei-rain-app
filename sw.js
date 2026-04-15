@@ -1,4 +1,4 @@
-const CACHE = 'taipei-rain-v1';
+const CACHE = 'taipei-rain-v3';
 const ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
