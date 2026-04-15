@@ -212,6 +212,127 @@
       border-radius: 10px;
       font-size: 13px;
     }
+
+    /* ── 常用地址 ── */
+    .presets-section {
+      padding: 0 16px 4px;
+      background: #112240;
+    }
+    .presets-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0 8px;
+      border-bottom: 1px solid #1a2f4e;
+    }
+    .presets-header span {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #5c7a9e;
+      font-weight: 600;
+    }
+    .add-preset-btn {
+      background: none;
+      border: 1px solid #2a4a7f;
+      color: #42a5f5;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .add-preset-btn:active { background: #1a2f4e; }
+
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 0 12px;
+    }
+    .preset-chip {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: #1a2f4e;
+      border: 1px solid #2a4a7f;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .preset-chip:hover { border-color: #42a5f5; }
+    .preset-chip button.chip-label {
+      background: none;
+      border: none;
+      color: #e0e8f0;
+      font-size: 13px;
+      padding: 7px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .preset-chip button.chip-label:active { color: #42a5f5; }
+    .preset-chip button.chip-del {
+      background: none;
+      border: none;
+      border-left: 1px solid #2a4a7f;
+      color: #3a5a80;
+      font-size: 14px;
+      padding: 7px 9px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .preset-chip button.chip-del:active { color: #ff8a80; background: #2d1a1a; }
+
+    .preset-empty {
+      font-size: 12px;
+      color: #3a5a80;
+      padding: 8px 0 12px;
+    }
+
+    /* 新增地址彈窗 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #112240;
+      border-radius: 20px 20px 0 0;
+      padding: 24px 20px 36px;
+      width: 100%;
+      max-width: 480px;
+    }
+    .modal-box h3 { font-size: 16px; margin-bottom: 16px; }
+    .modal-box input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #2a4a7f;
+      background: #1a2f4e;
+      color: #e0e8f0;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 8px;
+    }
+    .modal-box input:focus { border-color: #42a5f5; }
+    .modal-hint { font-size: 11px; color: #5c7a9e; margin-bottom: 16px; }
+    .modal-actions { display: flex; gap: 8px; }
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-cancel { background: #1a2f4e; color: #5c7a9e; }
+    .btn-save   { background: #1565C0; color: white; }
+    .btn-save:active { background: #0d47a1; }
   </style>
 </head>
 <body>
@@ -224,6 +345,29 @@
 <div class="search-bar">
   <input type="text" id="addressInput" placeholder="例如：信義區市府路1號" autocomplete="off">
   <button onclick="doSearch()">查詢</button>
+</div>
+
+<!-- 常用地址 -->
+<div class="presets-section">
+  <div class="presets-header">
+    <span>常用地址</span>
+    <button class="add-preset-btn" onclick="openModal()">＋ 新增</button>
+  </div>
+  <div class="preset-chips" id="presetChips"></div>
+</div>
+
+<!-- 新增地址彈窗 -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalIfOutside(event)">
+  <div class="modal-box">
+    <h3>新增常用地址</h3>
+    <input type="text" id="modalName" placeholder="名稱（例如：家、公司）" maxlength="10">
+    <input type="text" id="modalAddr" placeholder="地址（例如：大安區敦化南路1號）">
+    <div class="modal-hint">地址請填台北市範圍內，不需加「台北市」</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">取消</button>
+      <button class="btn-save"   onclick="savePreset()">儲存</button>
+    </div>
+  </div>
 </div>
 
 <div class="main">
@@ -289,6 +433,83 @@
 <script>
 const CWA_KEY = 'CWA-FA559BB9-7D2D-4E69-8FC0-B6E9FF46C531';
 let allStations = null;
+
+// ── 常用地址 ──────────────────────────────────
+const DEFAULT_PRESETS = [
+  { name: '台北車站', addr: '中正區忠孝西路一段49號' },
+  { name: '信義區', addr: '信義區市府路1號' },
+  { name: '大安區', addr: '大安區忠孝東路四段1號' },
+  { name: '內湖區', addr: '內湖區內湖路一段99號' },
+];
+
+function loadPresets() {
+  const saved = localStorage.getItem('presets');
+  return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_PRESETS));
+}
+
+function savePresets(presets) {
+  localStorage.setItem('presets', JSON.stringify(presets));
+}
+
+function renderPresets() {
+  const presets = loadPresets();
+  const container = document.getElementById('presetChips');
+  if (!presets.length) {
+    container.innerHTML = '<div class="preset-empty">尚無常用地址，點「＋ 新增」加入</div>';
+    return;
+  }
+  container.innerHTML = presets.map((p, i) => `
+    <div class="preset-chip">
+      <button class="chip-label" onclick="selectPreset(${i})">${p.name}</button>
+      <button class="chip-del"   onclick="deletePreset(${i})" title="刪除">×</button>
+    </div>
+  `).join('');
+}
+
+function selectPreset(i) {
+  const presets = loadPresets();
+  const p = presets[i];
+  document.getElementById('addressInput').value = p.addr;
+  doSearch();
+  // 滾到查詢結果
+  setTimeout(() => document.getElementById('statusCard').scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+}
+
+function deletePreset(i) {
+  const presets = loadPresets();
+  const name = presets[i].name;
+  if (!confirm(`刪除「${name}」？`)) return;
+  presets.splice(i, 1);
+  savePresets(presets);
+  renderPresets();
+}
+
+function openModal() {
+  document.getElementById('modalName').value = '';
+  document.getElementById('modalAddr').value = '';
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('modalName').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function closeModalIfOutside(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function savePreset() {
+  const name = document.getElementById('modalName').value.trim();
+  const addr = document.getElementById('modalAddr').value.trim();
+  if (!name) { alert('請輸入名稱'); return; }
+  if (!addr)  { alert('請輸入地址'); return; }
+  const presets = loadPresets();
+  presets.push({ name, addr });
+  savePresets(presets);
+  renderPresets();
+  closeModal();
+}
 
 // ── 搜尋入口 ──────────────────────────────────
 async function doSearch() {
@@ -485,6 +706,8 @@ if ('serviceWorker' in navigator) {
 
 // 頁面載入時就顯示雷達圖
 loadRadar();
+// 顯示常用地址
+renderPresets();
 </script>
 </body>
 </html>
