@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#1565C0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="台北降雨">
-  <title>台北降雨查詢</title>
+  <meta name="apple-mobile-web-app-title" content="降雨查詢">
+  <title>台灣降雨查詢</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <style>
@@ -62,161 +62,11 @@
     .search-bar button:hover  { background: #1976d2; }
     .search-bar button:active { background: #0d47a1; }
 
-    .main { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-
-    .card {
-      background: #112240;
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    .card-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: #5c7a9e;
-      margin-bottom: 12px;
-      font-weight: 600;
-    }
-
-    /* Rain status card */
-    .rain-status {
-      text-align: center;
-      padding: 24px 18px;
-    }
-    .rain-icon { font-size: 64px; line-height: 1; margin-bottom: 10px; }
-    .rain-label { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
-    .rain-label.raining   { color: #42a5f5; }
-    .rain-label.dry       { color: #66bb6a; }
-    .rain-label.loading   { color: #5c7a9e; }
-    .rain-sub { font-size: 13px; color: #5c7a9e; }
-    .rain-amount { font-size: 15px; color: #90caf9; margin-top: 8px; font-weight: 500; }
-
-    .initial-hint {
-      text-align: center;
-      padding: 30px 0 10px;
-      color: #3a5a80;
-    }
-    .initial-hint .hint-icon { font-size: 48px; margin-bottom: 10px; }
-    .initial-hint p { font-size: 14px; line-height: 1.6; }
-
-    /* Stations list */
-    .station-list { display: flex; flex-direction: column; gap: 8px; }
-    .station-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 12px;
-      background: #1a2f4e;
-      border-radius: 10px;
-    }
-    .station-name  { font-size: 14px; font-weight: 500; }
-    .station-dist  { font-size: 11px; color: #5c7a9e; margin-top: 2px; }
-    .station-rain  { font-size: 18px; font-weight: 700; color: #42a5f5; }
-    .station-unit  { font-size: 11px; color: #5c7a9e; }
-    .rain-dot {
-      display: inline-block;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      margin-right: 6px;
-    }
-    .rain-dot.raining { background: #42a5f5; box-shadow: 0 0 6px #42a5f5; }
-    .rain-dot.dry     { background: #66bb6a; }
-
-    /* Radar */
-    .radar-wrap {
-      border-radius: 10px;
-      overflow: hidden;
-      background: #000;
-      position: relative;
-      min-height: 200px;
-    }
-    .radar-wrap img {
-      width: 100%;
-      display: block;
-    }
-    .radar-wrap .radar-error {
-      padding: 30px;
-      text-align: center;
-      color: #5c7a9e;
-      font-size: 13px;
-    }
-    .radar-label {
-      position: absolute;
-      bottom: 8px; right: 8px;
-      background: rgba(0,0,0,0.6);
-      color: #90caf9;
-      font-size: 10px;
-      padding: 3px 7px;
-      border-radius: 6px;
-    }
-    .refresh-btn {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #2a4a7f;
-      background: transparent;
-      color: #42a5f5;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .refresh-btn:active { background: #1a2f4e; }
-
-    /* Camera links */
-    .cam-links { display: flex; flex-direction: column; gap: 8px; }
-    .cam-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      background: #1a2f4e;
-      border-radius: 10px;
-      text-decoration: none;
-      color: #e0e8f0;
-      font-size: 14px;
-      transition: background 0.15s;
-    }
-    .cam-link:active { background: #243f5e; }
-    .cam-link .cam-icon { font-size: 20px; }
-    .cam-link .cam-text { flex: 1; }
-    .cam-link .cam-sub { font-size: 11px; color: #5c7a9e; margin-top: 2px; }
-    .cam-link .arrow { color: #3a5a80; }
-
-    /* Update time */
-    .update-time {
-      text-align: center;
-      font-size: 11px;
-      color: #3a5a80;
-      padding-bottom: 20px;
-    }
-
-    /* Loading spinner */
-    .spinner {
-      display: inline-block;
-      width: 20px; height: 20px;
-      border: 2px solid #2a4a7f;
-      border-top-color: #42a5f5;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .error-msg {
-      background: #2d1a1a;
-      border: 1px solid #7f3535;
-      color: #ff8a80;
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-size: 13px;
-    }
-
-    /* ── 常用地址 ── */
+    /* 常用地址 */
     .presets-section {
       padding: 0 16px 4px;
       background: #112240;
+      border-bottom: 1px solid #0d1b2a;
     }
     .presets-header {
       display: flex;
@@ -242,7 +92,6 @@
       cursor: pointer;
     }
     .add-preset-btn:active { background: #1a2f4e; }
-
     .preset-chips {
       display: flex;
       flex-wrap: wrap;
@@ -252,7 +101,6 @@
     .preset-chip {
       display: flex;
       align-items: center;
-      gap: 0;
       background: #1a2f4e;
       border: 1px solid #2a4a7f;
       border-radius: 20px;
@@ -281,12 +129,7 @@
       line-height: 1;
     }
     .preset-chip button.chip-del:active { color: #ff8a80; background: #2d1a1a; }
-
-    .preset-empty {
-      font-size: 12px;
-      color: #3a5a80;
-      padding: 8px 0 12px;
-    }
+    .preset-empty { font-size: 12px; color: #3a5a80; padding: 8px 0 12px; }
 
     /* 新增地址彈窗 */
     .modal-overlay {
@@ -319,38 +162,194 @@
       margin-bottom: 8px;
     }
     .modal-box input:focus { border-color: #42a5f5; }
-    .modal-hint { font-size: 11px; color: #5c7a9e; margin-bottom: 16px; }
+    .modal-hint { font-size: 11px; color: #5c7a9e; margin-bottom: 16px; line-height: 1.6; }
     .modal-actions { display: flex; gap: 8px; }
     .modal-actions button {
-      flex: 1;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
+      flex: 1; padding: 12px; border-radius: 10px; border: none;
+      font-size: 15px; font-weight: 600; cursor: pointer;
     }
     .btn-cancel { background: #1a2f4e; color: #5c7a9e; }
     .btn-save   { background: #1565C0; color: white; }
     .btn-save:active { background: #0d47a1; }
+
+    .main { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+    .card {
+      background: #112240;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .card-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #5c7a9e;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    /* 主狀態卡 */
+    .status-main { text-align: center; padding: 20px 12px 16px; }
+    .rain-icon   { font-size: 60px; line-height: 1; margin-bottom: 10px; }
+    .rain-label  { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    .rain-label.raining { color: #42a5f5; }
+    .rain-label.dry     { color: #66bb6a; }
+    .rain-sub    { font-size: 13px; color: #5c7a9e; }
+    .rain-amount { font-size: 15px; color: #90caf9; margin-top: 8px; font-weight: 500; }
+
+    /* 白牆風險卡 */
+    .fog-card {
+      margin-top: 12px;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .fog-card.risk-low  { background: #0d2a1a; border: 1px solid #1b5e20; }
+    .fog-card.risk-mid  { background: #2a2200; border: 1px solid #f57f17; }
+    .fog-card.risk-high { background: #2a0d0d; border: 1px solid #b71c1c; }
+    .fog-icon  { font-size: 28px; flex-shrink: 0; }
+    .fog-text  {}
+    .fog-title { font-size: 15px; font-weight: 700; }
+    .fog-title.low  { color: #66bb6a; }
+    .fog-title.mid  { color: #ffb300; }
+    .fog-title.high { color: #ef5350; }
+    .fog-desc  { font-size: 12px; color: #7a9eb0; margin-top: 3px; line-height: 1.5; }
+
+    /* 氣象站列表 */
+    .station-list { display: flex; flex-direction: column; gap: 8px; }
+    .station-item {
+      background: #1a2f4e;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .station-row1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .station-name { font-size: 14px; font-weight: 500; }
+    .station-dist { font-size: 11px; color: #5c7a9e; margin-top: 2px; }
+    .station-rain { font-size: 20px; font-weight: 700; color: #42a5f5; }
+    .station-unit { font-size: 11px; color: #5c7a9e; }
+    .station-row2 {
+      display: flex;
+      gap: 12px;
+      margin-top: 7px;
+      padding-top: 7px;
+      border-top: 1px solid #243f5e;
+    }
+    .stat-item { font-size: 11px; color: #7a9eb0; }
+    .stat-item strong { color: #b0c8e0; font-weight: 600; }
+
+    .rain-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .rain-dot.raining { background: #42a5f5; box-shadow: 0 0 6px #42a5f5; }
+    .rain-dot.dry     { background: #66bb6a; }
+
+    .no-station-msg {
+      font-size: 13px;
+      color: #5c7a9e;
+      text-align: center;
+      padding: 8px 0;
+      line-height: 1.6;
+    }
+
+    /* 雷達 */
+    .radar-wrap {
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      min-height: 200px;
+    }
+    .radar-wrap img { width: 100%; display: block; }
+    .radar-wrap .radar-msg {
+      padding: 30px;
+      text-align: center;
+      color: #5c7a9e;
+      font-size: 13px;
+    }
+    .radar-label {
+      position: absolute;
+      bottom: 8px; right: 8px;
+      background: rgba(0,0,0,0.6);
+      color: #90caf9;
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 6px;
+    }
+    .refresh-btn {
+      width: 100%; margin-top: 10px; padding: 10px;
+      border-radius: 8px; border: 1px solid #2a4a7f;
+      background: transparent; color: #42a5f5;
+      font-size: 13px; cursor: pointer;
+    }
+    .refresh-btn:active { background: #1a2f4e; }
+
+    /* 連結卡 */
+    .cam-links { display: flex; flex-direction: column; gap: 8px; }
+    .cam-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; background: #1a2f4e;
+      border-radius: 10px; text-decoration: none;
+      color: #e0e8f0; font-size: 14px;
+    }
+    .cam-link:active { background: #243f5e; }
+    .cam-link .cam-icon { font-size: 20px; }
+    .cam-link .cam-text { flex: 1; }
+    .cam-link .cam-sub { font-size: 11px; color: #5c7a9e; margin-top: 2px; }
+    .cam-link .arrow { color: #3a5a80; }
+
+    .initial-hint {
+      text-align: center; padding: 30px 0 10px; color: #3a5a80;
+    }
+    .initial-hint .hint-icon { font-size: 48px; margin-bottom: 10px; }
+    .initial-hint p { font-size: 14px; line-height: 1.7; }
+
+    .update-time {
+      text-align: center; font-size: 11px;
+      color: #3a5a80; padding-bottom: 20px;
+    }
+
+    .spinner {
+      display: inline-block; width: 20px; height: 20px;
+      border: 2px solid #2a4a7f; border-top-color: #42a5f5;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      background: #2d1a1a; border: 1px solid #7f3535;
+      color: #ff8a80; padding: 12px 14px;
+      border-radius: 10px; font-size: 13px;
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>🌧 台北降雨查詢</h1>
-  <p>輸入台北市地址，即時查看是否下雨</p>
+  <h1>🌧 降雨 & 白牆查詢</h1>
+  <p>台灣各地 · 山區登山適用</p>
 </header>
 
 <div class="search-bar">
-  <input type="text" id="addressInput" placeholder="例如：信義區市府路1號" autocomplete="off">
+  <input type="text" id="addressInput" placeholder="輸入地址或山名，例如：合歡山" autocomplete="off">
   <button onclick="doSearch()">查詢</button>
 </div>
 
 <!-- 常用地址 -->
 <div class="presets-section">
   <div class="presets-header">
-    <span>常用地址</span>
+    <span>常用地點</span>
     <button class="add-preset-btn" onclick="openModal()">＋ 新增</button>
   </div>
   <div class="preset-chips" id="presetChips"></div>
@@ -359,10 +358,14 @@
 <!-- 新增地址彈窗 -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalIfOutside(event)">
   <div class="modal-box">
-    <h3>新增常用地址</h3>
-    <input type="text" id="modalName" placeholder="名稱（例如：家、公司）" maxlength="10">
-    <input type="text" id="modalAddr" placeholder="地址（例如：大安區敦化南路1號）">
-    <div class="modal-hint">地址請填台北市範圍內，不需加「台北市」</div>
+    <h3>新增常用地點</h3>
+    <input type="text" id="modalName" placeholder="名稱（例如：家、合歡山、公司）" maxlength="10">
+    <input type="text" id="modalAddr" placeholder="地址或地名（例如：合歡山、大安區忠孝東路1號）">
+    <div class="modal-hint">
+      · 台灣各地皆可查詢，不限台北市<br>
+      · 山區可直接填山名，例如「陽明山」「合歡山」<br>
+      · 地址儲存在您的手機，不會上傳
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">取消</button>
       <button class="btn-save"   onclick="savePreset()">儲存</button>
@@ -372,54 +375,65 @@
 
 <div class="main">
 
-  <!-- Status card -->
-  <div class="card rain-status" id="statusCard">
+  <!-- 主狀態卡 -->
+  <div class="card" id="statusCard">
     <div class="initial-hint">
       <div class="hint-icon">🗺️</div>
-      <p>輸入台北市地址<br>查詢該地點目前是否下雨</p>
+      <p>輸入地址或山名<br>查詢目前是否下雨、有無白牆風險</p>
     </div>
   </div>
 
-  <!-- Nearby stations -->
+  <!-- 附近氣象站 -->
   <div class="card" id="stationsCard" style="display:none">
-    <div class="card-title">附近氣象站降雨量</div>
+    <div class="card-title">附近氣象站資料</div>
     <div class="station-list" id="stationList"></div>
   </div>
 
-  <!-- Radar -->
+  <!-- 雷達圖 -->
   <div class="card">
-    <div class="card-title">北台灣雷達回波圖</div>
+    <div class="card-title">全台雷達回波圖</div>
     <div class="radar-wrap" id="radarWrap">
-      <div class="radar-error">載入中...</div>
+      <div class="radar-msg">載入中...</div>
     </div>
     <button class="refresh-btn" onclick="loadRadar()">↻ 重新整理雷達圖</button>
   </div>
 
-  <!-- Camera links -->
+  <!-- 參考連結 -->
   <div class="card">
-    <div class="card-title">即時路況影像</div>
+    <div class="card-title">延伸參考資訊</div>
     <div class="cam-links">
-      <a class="cam-link" href="https://cctv.bote.gov.taipei/" target="_blank" rel="noopener">
-        <span class="cam-icon">📹</span>
-        <span class="cam-text">
-          台北市交通監視器
-          <div class="cam-sub">市區各路口即時影像</div>
+      <a class="cam-link" href="https://www.cwa.gov.tw/V8/C/W/OBS/OBS_Radar.html" target="_blank" rel="noopener">
+        <span class="cam-icon">📡</span>
+        <span class="cam-text">氣象署雷達動畫
+          <div class="cam-sub">即時雷達回波動態圖</div>
+        </span>
+        <span class="arrow">›</span>
+      </a>
+      <a class="cam-link" href="https://www.cwa.gov.tw/V8/C/W/OBS/OBS_Sat.html" target="_blank" rel="noopener">
+        <span class="cam-icon">🛰️</span>
+        <span class="cam-text">氣象署衛星雲圖
+          <div class="cam-sub">可觀察雲層覆蓋狀況（白牆參考）</div>
+        </span>
+        <span class="arrow">›</span>
+      </a>
+      <a class="cam-link" href="https://hiking.biji.co/index.php?q=news&act=weather" target="_blank" rel="noopener">
+        <span class="cam-icon">⛰️</span>
+        <span class="cam-text">健行筆記山區天氣
+          <div class="cam-sub">登山專用天氣預報</div>
         </span>
         <span class="arrow">›</span>
       </a>
       <a class="cam-link" href="https://fhy.wra.gov.tw/RiverWeb/13/Map" target="_blank" rel="noopener">
         <span class="cam-icon">🌊</span>
-        <span class="cam-text">
-          水利署水情影像
+        <span class="cam-text">水利署水情影像
           <div class="cam-sub">河川水位與雨量即時影像</div>
         </span>
         <span class="arrow">›</span>
       </a>
-      <a class="cam-link" href="https://www.cwa.gov.tw/V8/C/W/Town/Town.html?TID=6300300" target="_blank" rel="noopener">
-        <span class="cam-icon">🌡️</span>
-        <span class="cam-text">
-          氣象署台北市預報
-          <div class="cam-sub">各行政區詳細天氣預報</div>
+      <a class="cam-link" href="https://cctv.bote.gov.taipei/" target="_blank" rel="noopener">
+        <span class="cam-icon">📹</span>
+        <span class="cam-text">台北市交通監視器
+          <div class="cam-sub">市區各路口即時影像</div>
         </span>
         <span class="arrow">›</span>
       </a>
@@ -427,58 +441,49 @@
   </div>
 
   <div class="update-time" id="updateTime"></div>
-
 </div>
 
 <script>
 const CWA_KEY = 'CWA-FA559BB9-7D2D-4E69-8FC0-B6E9FF46C531';
 let allStations = null;
 
-// ── 常用地址 ──────────────────────────────────
+// ── 常用地點 ──────────────────────────────────
 const DEFAULT_PRESETS = [
-  { name: '台北車站', addr: '中正區忠孝西路一段49號' },
-  { name: '信義區', addr: '信義區市府路1號' },
-  { name: '大安區', addr: '大安區忠孝東路四段1號' },
-  { name: '內湖區', addr: '內湖區內湖路一段99號' },
+  { name: '台北車站', addr: '台北市中正區忠孝西路一段49號' },
+  { name: '陽明山', addr: '陽明山國家公園' },
+  { name: '合歡山', addr: '合歡山' },
 ];
 
 function loadPresets() {
-  const saved = localStorage.getItem('presets');
+  const saved = localStorage.getItem('presets_v2');
   return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_PRESETS));
 }
-
-function savePresets(presets) {
-  localStorage.setItem('presets', JSON.stringify(presets));
-}
+function savePresets(p) { localStorage.setItem('presets_v2', JSON.stringify(p)); }
 
 function renderPresets() {
   const presets = loadPresets();
-  const container = document.getElementById('presetChips');
+  const c = document.getElementById('presetChips');
   if (!presets.length) {
-    container.innerHTML = '<div class="preset-empty">尚無常用地址，點「＋ 新增」加入</div>';
+    c.innerHTML = '<div class="preset-empty">尚無常用地點，點「＋ 新增」加入</div>';
     return;
   }
-  container.innerHTML = presets.map((p, i) => `
+  c.innerHTML = presets.map((p, i) => `
     <div class="preset-chip">
       <button class="chip-label" onclick="selectPreset(${i})">${p.name}</button>
-      <button class="chip-del"   onclick="deletePreset(${i})" title="刪除">×</button>
-    </div>
-  `).join('');
+      <button class="chip-del"   onclick="deletePreset(${i})">×</button>
+    </div>`).join('');
 }
 
 function selectPreset(i) {
-  const presets = loadPresets();
-  const p = presets[i];
+  const p = loadPresets()[i];
   document.getElementById('addressInput').value = p.addr;
   doSearch();
-  // 滾到查詢結果
   setTimeout(() => document.getElementById('statusCard').scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
 }
 
 function deletePreset(i) {
   const presets = loadPresets();
-  const name = presets[i].name;
-  if (!confirm(`刪除「${name}」？`)) return;
+  if (!confirm(`刪除「${presets[i].name}」？`)) return;
   presets.splice(i, 1);
   savePresets(presets);
   renderPresets();
@@ -490,20 +495,14 @@ function openModal() {
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(() => document.getElementById('modalName').focus(), 100);
 }
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-}
-
-function closeModalIfOutside(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function closeModalIfOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
 
 function savePreset() {
   const name = document.getElementById('modalName').value.trim();
   const addr = document.getElementById('modalAddr').value.trim();
   if (!name) { alert('請輸入名稱'); return; }
-  if (!addr)  { alert('請輸入地址'); return; }
+  if (!addr)  { alert('請輸入地址或地名'); return; }
   const presets = loadPresets();
   presets.push({ name, addr });
   savePresets(presets);
@@ -511,64 +510,59 @@ function savePreset() {
   closeModal();
 }
 
-// ── 搜尋入口 ──────────────────────────────────
+// ── 搜尋主流程 ────────────────────────────────
 async function doSearch() {
   const addr = document.getElementById('addressInput').value.trim();
-  if (!addr) { alert('請輸入地址'); return; }
+  if (!addr) { alert('請輸入地址或地名'); return; }
 
-  setStatus('loading', '查詢中…', '', '');
+  showLoading();
 
   try {
-    const { lat, lng, displayName } = await geocode(addr);
+    const { lat, lng } = await geocode(addr);
     const stations = await getStations();
-    const nearby = findNearest(stations, lat, lng, 5);
 
-    if (nearby.length === 0) {
-      setStatus('error', '找不到附近氣象站', '請確認地址在台北市範圍內', '');
+    // 山區站稀疏，動態擴大搜尋半徑
+    let nearby = findNearest(stations, lat, lng, 5, 0.3);
+    if (nearby.length < 2) nearby = findNearest(stations, lat, lng, 5, 0.6);
+    if (nearby.length < 1) nearby = findNearest(stations, lat, lng, 3, 1.0);
+
+    if (!nearby.length) {
+      showError('此地點附近找不到氣象站', '請嘗試調整地名，或查看下方雷達圖');
       return;
     }
 
-    // 以最近站的降雨量判斷
-    const nearest = nearby[0];
-    const precip = getPrecip(nearest);
-    const isRaining = precip > 0;
+    const nearest  = nearby[0];
+    const precip   = getPrecip(nearest);
+    const humidity = getHumidity(nearest);
+    const visibility = getVisibility(nearest);
+    const fogRisk  = calcFogRisk(precip, humidity, visibility);
 
-    // 顯示主狀態
-    const rainLevels = getRainLevel(precip);
-    setStatus(
-      isRaining ? 'raining' : 'dry',
-      isRaining ? rainLevels.label : '目前不下雨',
-      `最近氣象站：${nearest.StationName}（${(nearest.dist * 111).toFixed(1)} 公里）`,
-      precip > 0 ? `即時降雨量：${precip} mm` : '即時降雨量：0 mm'
-    );
-
-    // 顯示各站
+    showResult(nearest, precip, fogRisk);
     showStations(nearby);
 
-    // 更新時間
     const now = new Date();
     document.getElementById('updateTime').textContent =
-      `資料更新時間：${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      `資料更新：${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ` +
+      `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
   } catch (e) {
-    setStatus('error', '查詢失敗', e.message, '');
+    showError('查詢失敗', e.message);
     console.error(e);
   }
 }
 
-// ── Geocoding (Nominatim) ─────────────────────
+// ── Geocoding ─────────────────────────────────
 async function geocode(address) {
-  // 確保包含台北市
-  const q = address.includes('台北') ? address : `台北市${address}`;
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q + ', Taiwan')}&format=json&limit=1&accept-language=zh-TW`;
-  const resp = await fetch(url, { headers: { 'User-Agent': 'TaipeiRainApp/1.0' } });
+  const q = address + ', Taiwan';
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&accept-language=zh-TW`;
+  const resp = await fetch(url, { headers: { 'User-Agent': 'TaiwanRainApp/2.0' } });
   if (!resp.ok) throw new Error('地址查詢服務暫時無法使用');
   const data = await resp.json();
-  if (!data.length) throw new Error(`找不到「${address}」，請確認地址正確`);
-  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), displayName: data[0].display_name };
+  if (!data.length) throw new Error(`找不到「${address}」，請確認名稱正確`);
+  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
 }
 
-// ── CWA 氣象站資料 ────────────────────────────
+// ── CWA 氣象站 ────────────────────────────────
 async function getStations() {
   if (allStations) return allStations;
   const url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${CWA_KEY}&format=JSON`;
@@ -580,86 +574,175 @@ async function getStations() {
   return allStations;
 }
 
-function getPrecip(station) {
-  try {
-    const p = parseFloat(station.WeatherElement?.Now?.Precipitation ?? 0);
-    return isNaN(p) ? 0 : p;
-  } catch { return 0; }
+function getPrecip(s) {
+  const p = parseFloat(s.WeatherElement?.Now?.Precipitation ?? -99);
+  return (isNaN(p) || p < 0) ? 0 : p;
 }
 
-function getCoords(station) {
-  const coords = station.GeoInfo?.Coordinates;
+function getHumidity(s) {
+  const h = parseFloat(s.WeatherElement?.RelativeHumidity ?? -99);
+  return (isNaN(h) || h < 0) ? null : h;
+}
+
+function getVisibility(s) {
+  // VisibilityDescription: 良好/普通/不良/極差
+  return s.WeatherElement?.VisibilityDescription ?? null;
+}
+
+function getTemp(s) {
+  const t = parseFloat(s.WeatherElement?.AirTemperature ?? -99);
+  return (isNaN(t) || t < -50) ? null : t;
+}
+
+function getCoords(s) {
+  const coords = s.GeoInfo?.Coordinates;
   if (!coords?.length) return null;
   const c = coords.find(x => x.CoordinateName === 'TWD97') || coords[0];
   return { lat: parseFloat(c.StationLatitude), lng: parseFloat(c.StationLongitude) };
 }
 
-function findNearest(stations, lat, lng, n = 5) {
-  return stations
-    .map(s => {
-      const c = getCoords(s);
-      if (!c) return null;
-      const dist = Math.sqrt(Math.pow(c.lat - lat, 2) + Math.pow(c.lng - lng, 2));
-      return { ...s, dist, sLat: c.lat, sLng: c.lng };
-    })
-    .filter(s => s && s.dist < 0.3)
+function findNearest(stations, lat, lng, n, radius) {
+  return stations.map(s => {
+    const c = getCoords(s);
+    if (!c) return null;
+    const dist = Math.sqrt((c.lat - lat) ** 2 + (c.lng - lng) ** 2);
+    return { ...s, dist };
+  }).filter(s => s && s.dist < radius)
     .sort((a, b) => a.dist - b.dist)
     .slice(0, n);
 }
 
-function getRainLevel(mm) {
-  if (mm === 0)   return { label: '目前不下雨',    icon: '☀️' };
-  if (mm < 1)     return { label: '毛毛雨',        icon: '🌦️' };
-  if (mm < 5)     return { label: '小雨',          icon: '🌧️' };
-  if (mm < 15)    return { label: '中雨',          icon: '🌧️' };
-  if (mm < 30)    return { label: '大雨',          icon: '⛈️' };
-  return           { label: '豪雨',               icon: '⛈️' };
+// ── 白牆風險計算 ──────────────────────────────
+function calcFogRisk(precip, humidity, visibilityDesc) {
+  let score = 0;
+
+  // 濕度評分
+  if (humidity !== null) {
+    if (humidity >= 95) score += 3;
+    else if (humidity >= 88) score += 2;
+    else if (humidity >= 78) score += 1;
+  }
+
+  // 降雨評分
+  if (precip > 0) score += 2;
+
+  // 能見度評分
+  if (visibilityDesc) {
+    if (visibilityDesc.includes('極差') || visibilityDesc.includes('不良')) score += 3;
+    else if (visibilityDesc.includes('普通')) score += 1;
+  }
+
+  if (score >= 5) return 'high';
+  if (score >= 3) return 'mid';
+  return 'low';
 }
 
-// ── UI 更新 ───────────────────────────────────
-function setStatus(type, label, sub, amount) {
-  const card = document.getElementById('statusCard');
-  if (type === 'loading') {
-    card.innerHTML = `<div style="text-align:center;padding:30px 0">
+function fogRiskInfo(risk, humidity, visibilityDesc) {
+  const humStr = humidity !== null ? `濕度 ${humidity}%` : '';
+  const visStr = visibilityDesc && visibilityDesc !== '良好' ? `・能見度${visibilityDesc}` : '';
+  const details = [humStr, visStr].filter(Boolean).join(' ');
+
+  if (risk === 'high') return {
+    icon: '🌫️',
+    cls: 'high',
+    cardCls: 'risk-high',
+    title: '白牆高風險',
+    desc: `濃霧條件成立，能見度可能極低，建議暫緩登山或下撤。${details ? '\n' + details : ''}`
+  };
+  if (risk === 'mid') return {
+    icon: '🌁',
+    cls: 'mid',
+    cardCls: 'risk-mid',
+    title: '白牆中度風險',
+    desc: `有起霧可能，山區需注意能見度變化，備好雨具。${details ? '\n' + details : ''}`
+  };
+  return {
+    icon: '✅',
+    cls: 'low',
+    cardCls: 'risk-low',
+    title: '白牆低風險',
+    desc: `目前起霧條件不顯著。${details ? details : '能見度應屬正常。'}`
+  };
+}
+
+function getRainLevel(mm) {
+  if (mm === 0)  return { label: '目前不下雨', icon: '☀️' };
+  if (mm < 1)    return { label: '毛毛雨',     icon: '🌦️' };
+  if (mm < 5)    return { label: '小雨',       icon: '🌧️' };
+  if (mm < 15)   return { label: '中雨',       icon: '🌧️' };
+  if (mm < 30)   return { label: '大雨',       icon: '⛈️' };
+  return          { label: '豪雨',            icon: '⛈️' };
+}
+
+// ── UI ────────────────────────────────────────
+function showLoading() {
+  document.getElementById('statusCard').innerHTML = `
+    <div style="text-align:center;padding:30px 0">
       <span class="spinner"></span>
       <span style="color:#5c7a9e;font-size:15px">查詢中…</span>
     </div>`;
-    return;
-  }
-  if (type === 'error') {
-    card.innerHTML = `<div class="error-msg">⚠️ ${label}：${sub}</div>`;
-    return;
-  }
-  const isRaining = type === 'raining';
-  const lvl = isRaining ? getRainLevel(parseFloat(amount.replace(/[^0-9.]/g,'') || 0)) : { icon: '☀️' };
-  card.innerHTML = `
-    <div class="rain-icon">${isRaining ? '🌧️' : '☀️'}</div>
-    <div class="rain-label ${isRaining ? 'raining' : 'dry'}">${label}</div>
-    <div class="rain-sub">${sub}</div>
-    ${amount ? `<div class="rain-amount">${amount}</div>` : ''}
-  `;
+  document.getElementById('stationsCard').style.display = 'none';
+}
+
+function showError(title, msg) {
+  document.getElementById('statusCard').innerHTML =
+    `<div class="error-msg">⚠️ ${title}<br><span style="font-size:12px;opacity:0.8">${msg}</span></div>`;
+}
+
+function showResult(nearest, precip, fogRisk) {
+  const rl  = getRainLevel(precip);
+  const hum = getHumidity(nearest);
+  const vis = getVisibility(nearest);
+  const fog = fogRiskInfo(fogRisk, hum, vis);
+  const distKm = (nearest.dist * 111).toFixed(1);
+
+  document.getElementById('statusCard').innerHTML = `
+    <div class="status-main">
+      <div class="rain-icon">${rl.icon}</div>
+      <div class="rain-label ${precip > 0 ? 'raining' : 'dry'}">${rl.label}</div>
+      <div class="rain-sub">最近氣象站：${nearest.StationName}（${distKm} 公里）</div>
+      <div class="rain-amount">即時降雨：${precip} mm</div>
+    </div>
+    <div class="fog-card ${fog.cardCls}">
+      <div class="fog-icon">${fog.icon}</div>
+      <div class="fog-text">
+        <div class="fog-title ${fog.cls}">${fog.title}</div>
+        <div class="fog-desc">${fog.desc.replace(/\n/g,'<br>')}</div>
+      </div>
+    </div>`;
 }
 
 function showStations(stations) {
-  const card  = document.getElementById('stationsCard');
-  const list  = document.getElementById('stationList');
+  const card = document.getElementById('stationsCard');
   card.style.display = 'block';
-  list.innerHTML = stations.map(s => {
-    const p = getPrecip(s);
-    const raining = p > 0;
+  document.getElementById('stationList').innerHTML = stations.map(s => {
+    const p    = getPrecip(s);
+    const hum  = getHumidity(s);
+    const temp = getTemp(s);
+    const vis  = getVisibility(s);
     const distKm = (s.dist * 111).toFixed(1);
+    const raining = p > 0;
+
+    const extras = [
+      hum  !== null ? `濕度 <strong>${hum}%</strong>` : null,
+      temp !== null ? `氣溫 <strong>${temp}°C</strong>` : null,
+      vis  ? `能見度 <strong>${vis}</strong>` : null,
+    ].filter(Boolean);
+
     return `<div class="station-item">
-      <div>
-        <div class="station-name">
-          <span class="rain-dot ${raining ? 'raining' : 'dry'}"></span>
-          ${s.StationName}
+      <div class="station-row1">
+        <div>
+          <div class="station-name">
+            <span class="rain-dot ${raining ? 'raining' : 'dry'}"></span>${s.StationName}
+          </div>
+          <div class="station-dist">距離 ${distKm} 公里</div>
         </div>
-        <div class="station-dist">距離 ${distKm} 公里</div>
+        <div style="text-align:right">
+          <div class="station-rain">${p}</div>
+          <div class="station-unit">mm</div>
+        </div>
       </div>
-      <div style="text-align:right">
-        <div class="station-rain">${p}</div>
-        <div class="station-unit">mm</div>
-      </div>
+      ${extras.length ? `<div class="station-row2">${extras.map(e=>`<div class="stat-item">${e}</div>`).join('')}</div>` : ''}
     </div>`;
   }).join('');
 }
@@ -667,46 +750,44 @@ function showStations(stations) {
 // ── 雷達圖 ────────────────────────────────────
 function loadRadar() {
   const wrap = document.getElementById('radarWrap');
-  const ts = new Date().getTime();
-  // CWA 北部雷達圖（加時間戳防快取）
-  const img = new Image();
-  img.onload = () => {
-    wrap.innerHTML = `<img src="${img.src}" alt="雷達回波圖">
-      <div class="radar-label">氣象署雷達 ${new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div>`;
-  };
-  img.onerror = () => {
-    // 備用：使用另一個雷達來源
-    const img2 = new Image();
-    img2.onload = () => {
-      wrap.innerHTML = `<img src="${img2.src}" alt="雷達回波圖">
-        <div class="radar-label">雷達回波圖</div>`;
+  const ts = Date.now();
+  wrap.innerHTML = '<div class="radar-msg"><span class="spinner"></span>載入中…</div>';
+
+  const tryImg = (src, label, fallback) => {
+    const img = new Image();
+    img.onload = () => {
+      wrap.innerHTML = `<img src="${img.src}" alt="雷達回波圖">
+        <div class="radar-label">${label} ${new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div>`;
     };
-    img2.onerror = () => {
-      wrap.innerHTML = `<div class="radar-error">
-        雷達圖無法直接嵌入<br><br>
-        <a href="https://www.cwa.gov.tw/V8/C/W/OBS/OBS_Radar.html" target="_blank"
-           style="color:#42a5f5;text-decoration:none;">👉 點此開啟氣象署雷達圖</a>
-      </div>`;
-    };
-    img2.src = `https://www.cwa.gov.tw/Data/radar_mosaic/CV1_3600.png?t=${ts}`;
+    img.onerror = fallback;
+    img.src = src;
   };
-  img.src = `https://www.cwa.gov.tw/Data/radar/CV1_3600.png?t=${ts}`;
-  wrap.innerHTML = '<div class="radar-error"><span class="spinner"></span>載入中…</div>';
+
+  tryImg(
+    `https://www.cwa.gov.tw/Data/radar/CV1_3600.png?t=${ts}`,
+    '氣象署雷達',
+    () => tryImg(
+      `https://www.cwa.gov.tw/Data/radar_mosaic/CV1_3600.png?t=${ts}`,
+      '雷達回波',
+      () => {
+        wrap.innerHTML = `<div class="radar-msg">雷達圖無法直接嵌入<br><br>
+          <a href="https://www.cwa.gov.tw/V8/C/W/OBS/OBS_Radar.html" target="_blank"
+             style="color:#42a5f5;text-decoration:none;">👉 點此開啟氣象署雷達圖</a></div>`;
+      }
+    )
+  );
 }
 
-// ── Enter 鍵觸發搜尋 ──────────────────────────
+// ── 初始化 ────────────────────────────────────
 document.getElementById('addressInput').addEventListener('keypress', e => {
   if (e.key === 'Enter') doSearch();
 });
 
-// ── Service Worker 註冊 ───────────────────────
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-// 頁面載入時就顯示雷達圖
 loadRadar();
-// 顯示常用地址
 renderPresets();
 </script>
 </body>
