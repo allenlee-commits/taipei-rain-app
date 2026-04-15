@@ -331,6 +331,7 @@
       background: #2d1a1a; border: 1px solid #7f3535;
       color: #ff8a80; padding: 12px 14px;
       border-radius: 10px; font-size: 13px;
+      white-space: pre-line; line-height: 1.7;
     }
   </style>
 </head>
@@ -553,13 +554,39 @@ async function doSearch() {
 
 // ── Geocoding ─────────────────────────────────
 async function geocode(address) {
-  const q = address + ', Taiwan';
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&accept-language=zh-TW`;
-  const resp = await fetch(url, { headers: { 'User-Agent': 'TaiwanRainApp/2.0' } });
-  if (!resp.ok) throw new Error('地址查詢服務暫時無法使用');
-  const data = await resp.json();
-  if (!data.length) throw new Error(`找不到「${address}」，請確認名稱正確`);
-  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+  // 依序嘗試不同查詢格式，直到找到為止
+  const queries = buildQueries(address);
+  for (const q of queries) {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&accept-language=zh-TW&countrycodes=tw`;
+    const resp = await fetch(url, { headers: { 'User-Agent': 'TaiwanRainApp/2.0' } });
+    if (!resp.ok) throw new Error('地址查詢服務暫時無法使用，請稍後再試');
+    const data = await resp.json();
+    if (data.length) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+  }
+  throw new Error(
+    `找不到「${address}」\n` +
+    `建議格式：\n` +
+    `・台北地址請加縣市，例如「台北市大安區忠孝東路1號」\n` +
+    `・山區直接填山名，例如「合歡山」「陽明山」`
+  );
+}
+
+function buildQueries(address) {
+  const queries = [];
+  // 原始輸入 + 台灣
+  queries.push(address + ', 台灣');
+  // 如果沒有縣市，補上台灣（英文）
+  queries.push(address + ', Taiwan');
+  // 如果輸入像是「XX區XX路」，嘗試補上台北市
+  if (!address.match(/^台[北中南東]|^新北|^桃園|^高雄|^台南/) && address.includes('區')) {
+    queries.push('台北市' + address + ', Taiwan');
+  }
+  // 去掉門牌號碼，只查路名
+  const withoutNum = address.replace(/\d+號.*$/, '').replace(/第?\d+[段巷弄樓]/g, '').trim();
+  if (withoutNum !== address && withoutNum.length > 2) {
+    queries.push(withoutNum + ', Taiwan');
+  }
+  return queries;
 }
 
 // ── CWA 氣象站 ────────────────────────────────
