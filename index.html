@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#1565C0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="台北降雨">
+  <title>台北降雨查詢</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0d1b2a;
+      color: #e0e8f0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1565C0, #0d47a1);
+      padding: 20px 16px 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+    header p  { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+
+    .search-bar {
+      padding: 16px;
+      background: #112240;
+      display: flex;
+      gap: 8px;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #2a4a7f;
+      background: #1a2f4e;
+      color: #e0e8f0;
+      font-size: 15px;
+      outline: none;
+    }
+    .search-bar input:focus { border-color: #42a5f5; }
+    .search-bar input::placeholder { color: #5c7a9e; }
+    .search-bar button {
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      background: #1565C0;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .search-bar button:hover  { background: #1976d2; }
+    .search-bar button:active { background: #0d47a1; }
+
+    .main { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+    .card {
+      background: #112240;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .card-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #5c7a9e;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    /* Rain status card */
+    .rain-status {
+      text-align: center;
+      padding: 24px 18px;
+    }
+    .rain-icon { font-size: 64px; line-height: 1; margin-bottom: 10px; }
+    .rain-label { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+    .rain-label.raining   { color: #42a5f5; }
+    .rain-label.dry       { color: #66bb6a; }
+    .rain-label.loading   { color: #5c7a9e; }
+    .rain-sub { font-size: 13px; color: #5c7a9e; }
+    .rain-amount { font-size: 15px; color: #90caf9; margin-top: 8px; font-weight: 500; }
+
+    .initial-hint {
+      text-align: center;
+      padding: 30px 0 10px;
+      color: #3a5a80;
+    }
+    .initial-hint .hint-icon { font-size: 48px; margin-bottom: 10px; }
+    .initial-hint p { font-size: 14px; line-height: 1.6; }
+
+    /* Stations list */
+    .station-list { display: flex; flex-direction: column; gap: 8px; }
+    .station-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #1a2f4e;
+      border-radius: 10px;
+    }
+    .station-name  { font-size: 14px; font-weight: 500; }
+    .station-dist  { font-size: 11px; color: #5c7a9e; margin-top: 2px; }
+    .station-rain  { font-size: 18px; font-weight: 700; color: #42a5f5; }
+    .station-unit  { font-size: 11px; color: #5c7a9e; }
+    .rain-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .rain-dot.raining { background: #42a5f5; box-shadow: 0 0 6px #42a5f5; }
+    .rain-dot.dry     { background: #66bb6a; }
+
+    /* Radar */
+    .radar-wrap {
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      min-height: 200px;
+    }
+    .radar-wrap img {
+      width: 100%;
+      display: block;
+    }
+    .radar-wrap .radar-error {
+      padding: 30px;
+      text-align: center;
+      color: #5c7a9e;
+      font-size: 13px;
+    }
+    .radar-label {
+      position: absolute;
+      bottom: 8px; right: 8px;
+      background: rgba(0,0,0,0.6);
+      color: #90caf9;
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 6px;
+    }
+    .refresh-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #2a4a7f;
+      background: transparent;
+      color: #42a5f5;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .refresh-btn:active { background: #1a2f4e; }
+
+    /* Camera links */
+    .cam-links { display: flex; flex-direction: column; gap: 8px; }
+    .cam-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: #1a2f4e;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #e0e8f0;
+      font-size: 14px;
+      transition: background 0.15s;
+    }
+    .cam-link:active { background: #243f5e; }
+    .cam-link .cam-icon { font-size: 20px; }
+    .cam-link .cam-text { flex: 1; }
+    .cam-link .cam-sub { font-size: 11px; color: #5c7a9e; margin-top: 2px; }
+    .cam-link .arrow { color: #3a5a80; }
+
+    /* Update time */
+    .update-time {
+      text-align: center;
+      font-size: 11px;
+      color: #3a5a80;
+      padding-bottom: 20px;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px; height: 20px;
+      border: 2px solid #2a4a7f;
+      border-top-color: #42a5f5;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      background: #2d1a1a;
+      border: 1px solid #7f3535;
+      color: #ff8a80;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🌧 台北降雨查詢</h1>
+  <p>輸入台北市地址，即時查看是否下雨</p>
+</header>
+
+<div class="search-bar">
+  <input type="text" id="addressInput" placeholder="例如：信義區市府路1號" autocomplete="off">
+  <button onclick="doSearch()">查詢</button>
+</div>
+
+<div class="main">
+
+  <!-- Status card -->
+  <div class="card rain-status" id="statusCard">
+    <div class="initial-hint">
+      <div class="hint-icon">🗺️</div>
+      <p>輸入台北市地址<br>查詢該地點目前是否下雨</p>
+    </div>
+  </div>
+
+  <!-- Nearby stations -->
+  <div class="card" id="stationsCard" style="display:none">
+    <div class="card-title">附近氣象站降雨量</div>
+    <div class="station-list" id="stationList"></div>
+  </div>
+
+  <!-- Radar -->
+  <div class="card">
+    <div class="card-title">北台灣雷達回波圖</div>
+    <div class="radar-wrap" id="radarWrap">
+      <div class="radar-error">載入中...</div>
+    </div>
+    <button class="refresh-btn" onclick="loadRadar()">↻ 重新整理雷達圖</button>
+  </div>
+
+  <!-- Camera links -->
+  <div class="card">
+    <div class="card-title">即時路況影像</div>
+    <div class="cam-links">
+      <a class="cam-link" href="https://cctv.bote.gov.taipei/" target="_blank" rel="noopener">
+        <span class="cam-icon">📹</span>
+        <span class="cam-text">
+          台北市交通監視器
+          <div class="cam-sub">市區各路口即時影像</div>
+        </span>
+        <span class="arrow">›</span>
+      </a>
+      <a class="cam-link" href="https://fhy.wra.gov.tw/RiverWeb/13/Map" target="_blank" rel="noopener">
+        <span class="cam-icon">🌊</span>
+        <span class="cam-text">
+          水利署水情影像
+          <div class="cam-sub">河川水位與雨量即時影像</div>
+        </span>
+        <span class="arrow">›</span>
+      </a>
+      <a class="cam-link" href="https://www.cwa.gov.tw/V8/C/W/Town/Town.html?TID=6300300" target="_blank" rel="noopener">
+        <span class="cam-icon">🌡️</span>
+        <span class="cam-text">
+          氣象署台北市預報
+          <div class="cam-sub">各行政區詳細天氣預報</div>
+        </span>
+        <span class="arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="update-time" id="updateTime"></div>
+
+</div>
+
+<script>
+const CWA_KEY = 'CWA-FA559BB9-7D2D-4E69-8FC0-B6E9FF46C531';
+let allStations = null;
+
+// ── 搜尋入口 ──────────────────────────────────
+async function doSearch() {
+  const addr = document.getElementById('addressInput').value.trim();
+  if (!addr) { alert('請輸入地址'); return; }
+
+  setStatus('loading', '查詢中…', '', '');
+
+  try {
+    const { lat, lng, displayName } = await geocode(addr);
+    const stations = await getStations();
+    const nearby = findNearest(stations, lat, lng, 5);
+
+    if (nearby.length === 0) {
+      setStatus('error', '找不到附近氣象站', '請確認地址在台北市範圍內', '');
+      return;
+    }
+
+    // 以最近站的降雨量判斷
+    const nearest = nearby[0];
+    const precip = getPrecip(nearest);
+    const isRaining = precip > 0;
+
+    // 顯示主狀態
+    const rainLevels = getRainLevel(precip);
+    setStatus(
+      isRaining ? 'raining' : 'dry',
+      isRaining ? rainLevels.label : '目前不下雨',
+      `最近氣象站：${nearest.StationName}（${(nearest.dist * 111).toFixed(1)} 公里）`,
+      precip > 0 ? `即時降雨量：${precip} mm` : '即時降雨量：0 mm'
+    );
+
+    // 顯示各站
+    showStations(nearby);
+
+    // 更新時間
+    const now = new Date();
+    document.getElementById('updateTime').textContent =
+      `資料更新時間：${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  } catch (e) {
+    setStatus('error', '查詢失敗', e.message, '');
+    console.error(e);
+  }
+}
+
+// ── Geocoding (Nominatim) ─────────────────────
+async function geocode(address) {
+  // 確保包含台北市
+  const q = address.includes('台北') ? address : `台北市${address}`;
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q + ', Taiwan')}&format=json&limit=1&accept-language=zh-TW`;
+  const resp = await fetch(url, { headers: { 'User-Agent': 'TaipeiRainApp/1.0' } });
+  if (!resp.ok) throw new Error('地址查詢服務暫時無法使用');
+  const data = await resp.json();
+  if (!data.length) throw new Error(`找不到「${address}」，請確認地址正確`);
+  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), displayName: data[0].display_name };
+}
+
+// ── CWA 氣象站資料 ────────────────────────────
+async function getStations() {
+  if (allStations) return allStations;
+  const url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${CWA_KEY}&format=JSON`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error('氣象資料取得失敗');
+  const data = await resp.json();
+  if (!data.records?.Station) throw new Error('氣象資料格式錯誤');
+  allStations = data.records.Station;
+  return allStations;
+}
+
+function getPrecip(station) {
+  try {
+    const p = parseFloat(station.WeatherElement?.Now?.Precipitation ?? 0);
+    return isNaN(p) ? 0 : p;
+  } catch { return 0; }
+}
+
+function getCoords(station) {
+  const coords = station.GeoInfo?.Coordinates;
+  if (!coords?.length) return null;
+  const c = coords.find(x => x.CoordinateName === 'TWD97') || coords[0];
+  return { lat: parseFloat(c.StationLatitude), lng: parseFloat(c.StationLongitude) };
+}
+
+function findNearest(stations, lat, lng, n = 5) {
+  return stations
+    .map(s => {
+      const c = getCoords(s);
+      if (!c) return null;
+      const dist = Math.sqrt(Math.pow(c.lat - lat, 2) + Math.pow(c.lng - lng, 2));
+      return { ...s, dist, sLat: c.lat, sLng: c.lng };
+    })
+    .filter(s => s && s.dist < 0.3)
+    .sort((a, b) => a.dist - b.dist)
+    .slice(0, n);
+}
+
+function getRainLevel(mm) {
+  if (mm === 0)   return { label: '目前不下雨',    icon: '☀️' };
+  if (mm < 1)     return { label: '毛毛雨',        icon: '🌦️' };
+  if (mm < 5)     return { label: '小雨',          icon: '🌧️' };
+  if (mm < 15)    return { label: '中雨',          icon: '🌧️' };
+  if (mm < 30)    return { label: '大雨',          icon: '⛈️' };
+  return           { label: '豪雨',               icon: '⛈️' };
+}
+
+// ── UI 更新 ───────────────────────────────────
+function setStatus(type, label, sub, amount) {
+  const card = document.getElementById('statusCard');
+  if (type === 'loading') {
+    card.innerHTML = `<div style="text-align:center;padding:30px 0">
+      <span class="spinner"></span>
+      <span style="color:#5c7a9e;font-size:15px">查詢中…</span>
+    </div>`;
+    return;
+  }
+  if (type === 'error') {
+    card.innerHTML = `<div class="error-msg">⚠️ ${label}：${sub}</div>`;
+    return;
+  }
+  const isRaining = type === 'raining';
+  const lvl = isRaining ? getRainLevel(parseFloat(amount.replace(/[^0-9.]/g,'') || 0)) : { icon: '☀️' };
+  card.innerHTML = `
+    <div class="rain-icon">${isRaining ? '🌧️' : '☀️'}</div>
+    <div class="rain-label ${isRaining ? 'raining' : 'dry'}">${label}</div>
+    <div class="rain-sub">${sub}</div>
+    ${amount ? `<div class="rain-amount">${amount}</div>` : ''}
+  `;
+}
+
+function showStations(stations) {
+  const card  = document.getElementById('stationsCard');
+  const list  = document.getElementById('stationList');
+  card.style.display = 'block';
+  list.innerHTML = stations.map(s => {
+    const p = getPrecip(s);
+    const raining = p > 0;
+    const distKm = (s.dist * 111).toFixed(1);
+    return `<div class="station-item">
+      <div>
+        <div class="station-name">
+          <span class="rain-dot ${raining ? 'raining' : 'dry'}"></span>
+          ${s.StationName}
+        </div>
+        <div class="station-dist">距離 ${distKm} 公里</div>
+      </div>
+      <div style="text-align:right">
+        <div class="station-rain">${p}</div>
+        <div class="station-unit">mm</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── 雷達圖 ────────────────────────────────────
+function loadRadar() {
+  const wrap = document.getElementById('radarWrap');
+  const ts = new Date().getTime();
+  // CWA 北部雷達圖（加時間戳防快取）
+  const img = new Image();
+  img.onload = () => {
+    wrap.innerHTML = `<img src="${img.src}" alt="雷達回波圖">
+      <div class="radar-label">氣象署雷達 ${new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div>`;
+  };
+  img.onerror = () => {
+    // 備用：使用另一個雷達來源
+    const img2 = new Image();
+    img2.onload = () => {
+      wrap.innerHTML = `<img src="${img2.src}" alt="雷達回波圖">
+        <div class="radar-label">雷達回波圖</div>`;
+    };
+    img2.onerror = () => {
+      wrap.innerHTML = `<div class="radar-error">
+        雷達圖無法直接嵌入<br><br>
+        <a href="https://www.cwa.gov.tw/V8/C/W/OBS/OBS_Radar.html" target="_blank"
+           style="color:#42a5f5;text-decoration:none;">👉 點此開啟氣象署雷達圖</a>
+      </div>`;
+    };
+    img2.src = `https://www.cwa.gov.tw/Data/radar_mosaic/CV1_3600.png?t=${ts}`;
+  };
+  img.src = `https://www.cwa.gov.tw/Data/radar/CV1_3600.png?t=${ts}`;
+  wrap.innerHTML = '<div class="radar-error"><span class="spinner"></span>載入中…</div>';
+}
+
+// ── Enter 鍵觸發搜尋 ──────────────────────────
+document.getElementById('addressInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+// ── Service Worker 註冊 ───────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// 頁面載入時就顯示雷達圖
+loadRadar();
+</script>
+</body>
+</html>
